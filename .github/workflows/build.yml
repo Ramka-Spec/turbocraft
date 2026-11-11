@@ -1,0 +1,56 @@
+name: Build TurboCraft
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        mc: ['1.21.11', '26.3']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: current
+
+      - name: Latest stable Fabric Loader
+        id: loader
+        run: echo "version=$(curl -s https://meta.fabricmc.net/v2/versions/loader | jq -r '[.[] | select(.stable)][0].version')" >> "$GITHUB_OUTPUT"
+
+      - name: Build
+        working-directory: mc-${{ matrix.mc }}
+        run: gradle build --stacktrace -Ploader_version=${{ steps.loader.outputs.version }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: turbocraft-${{ matrix.mc }}
+          path: mc-${{ matrix.mc }}/build/libs/turbocraft-*${{ matrix.mc }}.jar
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: jars
+          merge-multiple: true
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag || true
+          gh release create latest jars/*.jar --repo "$GITHUB_REPOSITORY" \
+            --title "TurboCraft (latest build)" --notes "Built from ${GITHUB_SHA::7}"

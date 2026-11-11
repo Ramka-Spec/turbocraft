@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.turbocraft.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "MobMixin",
+    "LivingEntityMixin"
+  ],
+  "client": [
+    "EntityRendererMixin",
+    "ClientLevelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}

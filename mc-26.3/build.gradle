@@ -1,0 +1,36 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version '1.19.4'
+}
+
+version = "${project.mod_version}+${project.minecraft_version}"
+group = 'com.turbocraft'
+base { archivesName = 'turbocraft' }
+
+sourceSets {
+    main {
+        java { srcDirs = ['../common/src/main/java'] }
+        resources { srcDirs = ['../common/src/main/resources'] }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+}
+
+processResources {
+    def props = [version: project.version, minecraft_version: project.minecraft_version]
+    inputs.properties props
+    filesMatching('fabric.mod.json') { expand props }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = 'UTF-8'
+    it.options.release = 25
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}

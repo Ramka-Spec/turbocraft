@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "turbocraft",
+  "version": "${version}",
+  "name": "TurboCraft",
+  "description": "Lightweight performance mod: distance culling for entities and particles, throttled AI and collisions for far-away mobs.",
+  "authors": ["TurboCraft"],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.turbocraft.TurboCraft"]
+  },
+  "mixins": ["turbocraft.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "${minecraft_version}",
+    "java": ">=21"
+  }
+}
