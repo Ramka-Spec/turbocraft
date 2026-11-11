@@ -19,20 +19,10 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 }
 
-loom {
-    mixin {
-        defaultRefmapName = 'turbocraft.refmap.json'
-    }
-}
-
 processResources {
     def props = [version: project.version, minecraft_version: project.minecraft_version]
     inputs.properties props
     filesMatching('fabric.mod.json') { expand props }
-    // Obfuscated versions need a refmap so mixins find methods in the real game
-    filesMatching('turbocraft.mixins.json') {
-        filter { line -> line.replace('"required": true,', '"required": true,\n  "refmap": "turbocraft.refmap.json",') }
-    }
 }
 
 tasks.withType(JavaCompile).configureEach {
